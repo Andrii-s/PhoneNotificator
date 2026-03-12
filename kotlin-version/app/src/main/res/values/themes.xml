@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Material 3 theme declaration.
+    Compose handles actual colour/typography via Theme.kt.
+    This XML theme is required for the Activity window chrome
+    (status bar, navigation bar) before Compose takes over.
+-->
+<resources>
+
+    <!-- Base application theme -->
+    <style name="Theme.AutoDialer" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Status bar -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
+
+        <!-- Navigation bar -->
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightNavigationBar">true</item>
+
+        <!-- Edge-to-edge -->
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:enforceStatusBarContrast">false</item>
+        <item name="android:enforceNavigationBarContrast">false</item>
+
+        <!-- Splash / launch screen background -->
+        <item name="android:windowBackground">@color/splash_background</item>
+    </style>
+
+    <!-- Splash screen theme applied before the activity renders -->
+    <style name="Theme.AutoDialer.Splash" parent="Theme.AutoDialer">
+        <item name="android:windowBackground">@color/splash_background</item>
+    </style>
+
+</resources>

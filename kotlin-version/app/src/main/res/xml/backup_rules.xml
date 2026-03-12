@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Auto-generated backup rules for Android 12+.
+    Exclude sensitive data from cloud backups.
+-->
+<full-backup-content>
+    <!-- Exclude shared prefs that contain credentials -->
+    <exclude domain="sharedpref" path="com.example.autodialer.credentials.xml" />
+    <!-- Exclude databases to avoid stale data after reinstall -->
+    <exclude domain="database" path="autodialer.db" />
+</full-backup-content>

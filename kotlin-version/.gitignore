@@ -1,0 +1,20 @@
+# Gradle
+.gradle/
+build/
+local.properties
+
+# Android Studio
+.idea/
+*.iml
+.DS_Store
+
+# APK/AAB build outputs
+*.apk
+*.aab
+*.ap_
+
+# Room schema export (can be added to VCS if desired, excluded here)
+app/schemas/
+
+# ProGuard mapping files
+*.map

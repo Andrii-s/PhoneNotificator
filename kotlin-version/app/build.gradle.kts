@@ -63,6 +63,13 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
+    testOptions {
+        unitTests {
+            // Prevent Android stub methods from throwing RuntimeException: Stub!
+            isReturnDefaultValues = true
+        }
+    }
 }
 
 dependencies {
@@ -115,6 +122,12 @@ dependencies {
     // Debug
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    // Unit Tests
+    testImplementation(libs.junit)
+    testImplementation(libs.mockito.kotlin)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.turbine)
 }
 
 // Allow references to generated code

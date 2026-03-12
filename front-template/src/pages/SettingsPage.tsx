@@ -124,6 +124,11 @@ const SettingsPage = () => {
         <Button size="lg" className="mt-auto w-full" onClick={() => navigate("/debtors")}>
           Далі →
         </Button>
+
+        {/* Exit button (40px below "Далі") */}
+        <Button size="lg" className="mt-10 w-full" onClick={() => { navigate("/confirm-logout"); }}>
+          Вийти
+        </Button>
       </div>
     </div>
   );

@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import SplashScreen from "./pages/SplashScreen";
 import SettingsPage from "./pages/SettingsPage";
 import DebtorsPage from "./pages/DebtorsPage";
+import ConfirmLogout from "./pages/ConfirmLogout";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -19,6 +20,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<SplashScreen />} />
           <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/confirm-logout" element={<ConfirmLogout />} />
           <Route path="/debtors" element={<DebtorsPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

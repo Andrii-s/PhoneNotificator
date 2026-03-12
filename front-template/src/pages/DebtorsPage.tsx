@@ -41,13 +41,13 @@ const DebtorsPage = () => {
       <div className="flex flex-1 flex-col gap-4 p-4">
         {/* Mode selector */}
         <div>
-          <Label className="mb-2 block text-sm font-medium">Режим відправки</Label>
+          <Label className="mb-2 block text-sm font-medium">Режим оповіщення</Label>
           <Select value={mode} onValueChange={(v) => setMode(v as SendMode)}>
             <SelectTrigger>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="debtors">Боржникам</SelectItem>
+              <SelectItem value="debtors">Боржники</SelectItem>
               <SelectItem value="manual">Ввести номер вручну</SelectItem>
               <SelectItem value="list">Введення номерів списком</SelectItem>
             </SelectContent>

@@ -4,6 +4,11 @@ using PhoneNotificator.Core.Abstractions;
 using PhoneNotificator.Core.Services;
 using PhoneNotificator.Core.Services.Interfaces;
 using PhoneNotificator.Core.ViewModels;
+#if ANDROID
+using PhoneNotificator.Platforms.Android.Services;
+#elif IOS
+using PhoneNotificator.Platforms.iOS.Services;
+#endif
 using PhoneNotificator.Services;
 using PhoneNotificator.Views;
 using Plugin.Maui.Audio;
@@ -36,7 +41,25 @@ public static class MauiProgram
         builder.Services.AddSingleton<IToastService, ToastService>();
         builder.Services.AddSingleton<IConfirmationService, PopupConfirmationService>();
         builder.Services.AddSingleton<IAppCloser, AppCloser>();
+        builder.Services.AddSingleton<IPhoneDialerService, PhoneDialerService>();
+
+#if ANDROID
+        builder.Services.AddSingleton<ICallMonitor, AndroidCallMonitor>();
+        builder.Services.AddSingleton<IAudioInjectionService, AndroidAudioInjector>();
+        builder.Services.AddSingleton<ICallPermissionService, AndroidCallPermissionService>();
+        builder.Services.AddSingleton<ICallService, CallService>();
+#elif IOS
+        builder.Services.AddSingleton<CallObserver>();
+        builder.Services.AddSingleton<ICallMonitor, IosCallMonitor>();
+        builder.Services.AddSingleton<IAudioInjectionService, IosAudioInjectionService>();
+        builder.Services.AddSingleton<ICallPermissionService, IosCallPermissionService>();
+        builder.Services.AddSingleton<ICallService, CallService>();
+#else
+        builder.Services.AddSingleton<IAudioInjectionService, NoOpAudioInjectionService>();
+        builder.Services.AddSingleton<ICallPermissionService, AlwaysGrantedCallPermissionService>();
         builder.Services.AddSingleton<ICallService, PreviewCallService>();
+#endif
+
         builder.Services.AddSingleton<AppShell>();
 
         builder.Services

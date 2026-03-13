@@ -5,6 +5,7 @@ import android.media.MediaPlayer
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.autodialer.data.local.AppPreferences
 import com.example.autodialer.domain.model.AudioFile
 import com.example.autodialer.domain.repository.AudioRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -32,6 +33,7 @@ import javax.inject.Inject
 class SettingsViewModel @Inject constructor(
     private val audioRepository: AudioRepository,
     @ApplicationContext private val context: Context,
+    private val appPreferences: AppPreferences,
 ) : ViewModel() {
 
     // -------------------------------------------------------------------------
@@ -49,6 +51,10 @@ class SettingsViewModel @Inject constructor(
         val duration: Int = 0,
         val isLoading: Boolean = false,
         val error: String? = null,
+        /** Raw text currently in the delay input field. */
+        val audioDelayInput: String = AppPreferences.DEFAULT_AUDIO_DELAY_SECONDS.toString(),
+        /** True when the delay input contains an invalid value. */
+        val audioDelayError: Boolean = false,
     )
 
     private val _uiState = MutableStateFlow(SettingsUiState())
@@ -67,6 +73,7 @@ class SettingsViewModel @Inject constructor(
 
     init {
         loadAudioFiles()
+        _uiState.update { it.copy(audioDelayInput = appPreferences.audioDelaySeconds.toString()) }
     }
 
     // -------------------------------------------------------------------------
@@ -217,6 +224,26 @@ class SettingsViewModel @Inject constructor(
         val newPos = minOf(duration, (mediaPlayer?.currentPosition ?: 0) + 10_000)
         mediaPlayer?.seekTo(newPos)
         _uiState.update { it.copy(currentPosition = newPos) }
+    }
+
+    /**
+     * Called on every keystroke in the delay input field.
+     * Validates that the text is a non-negative integer; saves to preferences
+     * immediately when valid so the value persists across restarts.
+     */
+    fun onAudioDelayChanged(text: String) {
+        val trimmed = text.trim()
+        val parsed = trimmed.toIntOrNull()
+        val isValid = parsed != null && parsed >= 0
+        _uiState.update {
+            it.copy(
+                audioDelayInput = text,
+                audioDelayError = trimmed.isNotEmpty() && !isValid,
+            )
+        }
+        if (isValid) {
+            appPreferences.audioDelaySeconds = parsed!!
+        }
     }
 
     /** Clears a previously shown error message. */

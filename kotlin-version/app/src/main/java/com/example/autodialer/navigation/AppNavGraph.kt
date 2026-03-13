@@ -1,7 +1,9 @@
 package com.example.autodialer.navigation
 
+import android.app.Activity
 import android.net.Uri
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -53,6 +55,8 @@ sealed class Screen(val route: String) {
 fun AppNavGraph(
     navController: NavHostController = rememberNavController(),
 ) {
+    val activity = LocalContext.current as? Activity
+
     NavHost(
         navController = navController,
         startDestination = Screen.Splash.route,
@@ -107,9 +111,7 @@ fun AppNavGraph(
         composable(Screen.ConfirmLogout.route) {
             ConfirmLogoutScreen(
                 onConfirm = {
-                    navController.navigate(Screen.Settings.route) {
-                        popUpTo(Screen.Settings.route) { inclusive = true }
-                    }
+                    activity?.finish()
                 },
                 onDismiss = {
                     navController.popBackStack()

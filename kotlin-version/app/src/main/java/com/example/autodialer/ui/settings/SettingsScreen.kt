@@ -39,6 +39,7 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SnackbarHost
@@ -56,6 +57,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -239,6 +242,23 @@ fun SettingsScreen(
                     onSkipForward = viewModel::onSkipForward,
                 )
             }
+
+            // ── Audio delay setting ───────────────────────────────────────────
+            OutlinedTextField(
+                value = uiState.audioDelayInput,
+                onValueChange = viewModel::onAudioDelayChanged,
+                label = { Text(stringResource(R.string.settings_audio_delay_label)) },
+                suffix = { Text(stringResource(R.string.settings_audio_delay_unit)) },
+                isError = uiState.audioDelayError,
+                supportingText = if (uiState.audioDelayError) {
+                    { Text(stringResource(R.string.settings_audio_delay_error)) }
+                } else null,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                singleLine = true,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 4.dp),
+            )
 
             // ── Bottom navigation row ─────────────────────────────────────────
             HorizontalDivider()

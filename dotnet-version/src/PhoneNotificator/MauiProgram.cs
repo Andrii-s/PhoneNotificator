@@ -1,8 +1,12 @@
 using CommunityToolkit.Maui;
 using Microsoft.Extensions.Logging;
 using PhoneNotificator.Core.Abstractions;
+using PhoneNotificator.Core.Services;
+using PhoneNotificator.Core.Services.Interfaces;
 using PhoneNotificator.Core.ViewModels;
+using PhoneNotificator.Services;
 using PhoneNotificator.Views;
+using Plugin.Maui.Audio;
 
 namespace PhoneNotificator;
 
@@ -14,6 +18,7 @@ public static class MauiProgram
         builder
             .UseMauiApp<App>()
             .UseMauiCommunityToolkit()
+            .AddAudio()
             .ConfigureFonts(fonts =>
             {
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
@@ -21,7 +26,17 @@ public static class MauiProgram
             });
 
         builder.Services.AddSingleton<IAppSession, AppSession>();
+        builder.Services.AddSingleton<IAppFileSystem, MauiFileSystem>();
+        builder.Services.AddSingleton<IPreferencesService, PreferencesService>();
+        builder.Services.AddSingleton<IAudioFileService, AudioFileService>();
+        builder.Services.AddSingleton<IAudioPlayerService, AudioPlayerService>();
+        builder.Services.AddSingleton<IFilePickerService, FilePickerService>();
+        builder.Services.AddSingleton<INavigationService, ShellNavigationService>();
+        builder.Services.AddSingleton<IToastService, ToastService>();
+        builder.Services.AddSingleton<IConfirmationService, PopupConfirmationService>();
+        builder.Services.AddSingleton<IAppCloser, AppCloser>();
         builder.Services.AddSingleton<AppShell>();
+
         builder.Services.AddTransient<SettingsViewModel>();
         builder.Services.AddTransient<DebtorsViewModel>();
         builder.Services.AddTransient<SplashPage>();

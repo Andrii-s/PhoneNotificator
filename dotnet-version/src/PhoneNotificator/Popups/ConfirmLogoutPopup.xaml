@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup
+    x:Class="PhoneNotificator.Popups.ConfirmLogoutPopup"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    CanBeDismissedByTappingOutsideOfPopup="False">
+
+    <Border
+        BackgroundColor="White"
+        Padding="24"
+        Stroke="#D9E6DE"
+        StrokeShape="RoundRectangle 18">
+        <VerticalStackLayout Spacing="18">
+            <Label
+                FontAttributes="Bold"
+                FontSize="20"
+                Text="Підтвердження виходу"
+                TextColor="#14251D" />
+
+            <Label
+                FontSize="14"
+                LineBreakMode="WordWrap"
+                Text="Ви дійсно готові вийти з додатку?"
+                TextColor="#476257" />
+
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                <Button
+                    Grid.Column="0"
+                    BackgroundColor="#F4F7F5"
+                    Clicked="OnCancelClicked"
+                    Text="Ні"
+                    TextColor="#14251D" />
+                <Button
+                    Grid.Column="1"
+                    BackgroundColor="#B42318"
+                    Clicked="OnConfirmClicked"
+                    Text="Так"
+                    TextColor="White" />
+            </Grid>
+        </VerticalStackLayout>
+    </Border>
+</toolkit:Popup>

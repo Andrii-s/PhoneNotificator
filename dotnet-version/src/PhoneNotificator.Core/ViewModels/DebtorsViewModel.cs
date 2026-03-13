@@ -193,7 +193,7 @@ public partial class DebtorsViewModel : ObservableObject
 
         if (phoneNumberList.Count == 0)
         {
-            await _toastService.ShowAsync("Немає номерів для обдзвону.");
+            await _toastService.ShowAsync("Немає номерів для обзвону.");
             return;
         }
 
@@ -203,7 +203,7 @@ public partial class DebtorsViewModel : ObservableObject
             IsCallsRunning = true;
             ErrorMessage = string.Empty;
             SelectedAudioFileName = selectedAudioFile.FileName;
-            CallLog.Add($"[{DateTime.Now:HH:mm}] Старт обдзвону: {phoneNumberList.Count} номер(ів).");
+            CallLog.Add($"[{DateTime.Now:HH:mm}] Старт обзвону: {phoneNumberList.Count} номер(ів).");
 
             await _callService.MakeCallsSequentialAsync(
                 phoneNumberList,
@@ -225,7 +225,7 @@ public partial class DebtorsViewModel : ObservableObject
 
     private async Task HandleCallCompletedAsync(CallReport report)
     {
-        CallLog.Add($"[{report.EndTime:HH:mm}] {report.PhoneNumber} — {report.DurationFormatted}");
+        CallLog.Add($"[{report.EndTime:HH:mm}] {report.PhoneNumber} - {report.DurationFormatted}");
 
         try
         {

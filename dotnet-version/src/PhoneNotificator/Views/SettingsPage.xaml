@@ -19,144 +19,167 @@
                 TextColor="White" />
         </Border>
 
-        <Grid Grid.Row="1" Padding="24" RowDefinitions="Auto,Auto,Auto,Auto,Auto,*" RowSpacing="16">
-            <ActivityIndicator
-                Grid.Row="0"
-                Color="#0B4D3A"
-                HorizontalOptions="Center"
-                IsRunning="{Binding IsBusy}"
-                IsVisible="{Binding IsBusy}" />
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="24" Spacing="16">
+                <ActivityIndicator
+                    Color="#0B4D3A"
+                    HorizontalOptions="Center"
+                    IsRunning="{Binding IsBusy}"
+                    IsVisible="{Binding IsBusy}" />
 
-            <Button
-                Grid.Row="1"
-                BackgroundColor="#0B4D3A"
-                Command="{Binding UploadFileCommand}"
-                CornerRadius="14"
-                HeightRequest="52"
-                Text="Завантажити аудіофайл"
-                TextColor="White" />
+                <Button
+                    BackgroundColor="#0B4D3A"
+                    Command="{Binding UploadFileCommand}"
+                    CornerRadius="14"
+                    HeightRequest="52"
+                    Text="Завантажити аудіофайл"
+                    TextColor="White" />
 
-            <Border
-                Grid.Row="2"
-                BackgroundColor="White"
-                Padding="0"
-                Stroke="#D9E6DE"
-                StrokeShape="RoundRectangle 18">
-                <CollectionView
-                    EmptyView="Ще немає завантажених файлів."
-                    ItemsSource="{Binding AudioFiles}"
-                    SelectedItem="{Binding SelectedFile, Mode=TwoWay}"
-                    SelectionMode="Single">
-                    <CollectionView.Header>
-                        <Grid
-                            Padding="18,14"
-                            BackgroundColor="#F8FBF9"
-                            ColumnDefinitions="*,Auto">
-                            <Label
-                                FontAttributes="Bold"
-                                Text="Завантажені файли"
-                                TextColor="#14251D" />
-                            <Label
-                                Grid.Column="1"
-                                FontAttributes="Bold"
-                                Text="Дія"
-                                TextColor="#476257" />
-                        </Grid>
-                    </CollectionView.Header>
-
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="models:AudioFile">
+                <Border
+                    BackgroundColor="White"
+                    Padding="0"
+                    Stroke="#D9E6DE"
+                    StrokeShape="RoundRectangle 18">
+                    <CollectionView
+                        EmptyView="Ще немає завантажених файлів."
+                        ItemsSource="{Binding AudioFiles}"
+                        SelectedItem="{Binding SelectedFile, Mode=TwoWay}"
+                        SelectionMode="Single">
+                        <CollectionView.Header>
                             <Grid
                                 Padding="18,14"
-                                ColumnDefinitions="*,Auto"
-                                ColumnSpacing="12">
-                                <VerticalStackLayout Spacing="4">
-                                    <Label
-                                        FontAttributes="Bold"
-                                        Text="{Binding FileName}"
-                                        TextColor="#14251D" />
-                                    <Label
-                                        FontSize="12"
-                                        LineBreakMode="TailTruncation"
-                                        Text="{Binding FilePath}"
-                                        TextColor="#6A7F73" />
-                                </VerticalStackLayout>
-
-                                <Button
+                                BackgroundColor="#F8FBF9"
+                                ColumnDefinitions="*,Auto">
+                                <Label
+                                    FontAttributes="Bold"
+                                    Text="Завантажені файли"
+                                    TextColor="#14251D" />
+                                <Label
                                     Grid.Column="1"
-                                    BackgroundColor="#E8F2ED"
-                                    Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.TogglePlayCommand}"
-                                    CommandParameter="{Binding .}"
-                                    CornerRadius="12"
-                                    HeightRequest="40"
-                                    Text="Play / Pause"
-                                    TextColor="#0B4D3A"
-                                    WidthRequest="120" />
+                                    FontAttributes="Bold"
+                                    Text="Дія"
+                                    TextColor="#476257" />
                             </Grid>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-            </Border>
+                        </CollectionView.Header>
 
-            <Border
-                Grid.Row="3"
-                BackgroundColor="White"
-                Padding="20"
-                Stroke="#D9E6DE"
-                StrokeShape="RoundRectangle 18">
-                <VerticalStackLayout Spacing="12">
-                    <Label
-                        FontAttributes="Bold"
-                        Text="Аудіо-контролер"
-                        TextColor="#14251D" />
-                    <Label
-                        FontSize="14"
-                        Text="{Binding SelectedFile.FileName, TargetNullValue='Немає вибраного файлу'}"
-                        TextColor="#476257" />
-                    <Slider
-                        IsEnabled="False"
-                        Maximum="1"
-                        Value="{Binding PlaybackProgress}" />
-                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="models:AudioFile">
+                                <Grid
+                                    Padding="18,14"
+                                    ColumnDefinitions="*,Auto"
+                                    ColumnSpacing="12">
+                                    <VerticalStackLayout Spacing="4">
+                                        <Label
+                                            FontAttributes="Bold"
+                                            Text="{Binding FileName}"
+                                            TextColor="#14251D" />
+                                        <Label
+                                            FontSize="12"
+                                            LineBreakMode="TailTruncation"
+                                            Text="{Binding FilePath}"
+                                            TextColor="#6A7F73" />
+                                    </VerticalStackLayout>
+
+                                    <Button
+                                        Grid.Column="1"
+                                        BackgroundColor="#E8F2ED"
+                                        Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.TogglePlayCommand}"
+                                        CommandParameter="{Binding .}"
+                                        CornerRadius="12"
+                                        HeightRequest="40"
+                                        Text="Play / Pause"
+                                        TextColor="#0B4D3A"
+                                        WidthRequest="120" />
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </Border>
+
+                <Border
+                    BackgroundColor="White"
+                    Padding="20"
+                    Stroke="#D9E6DE"
+                    StrokeShape="RoundRectangle 18">
+                    <VerticalStackLayout Spacing="12">
                         <Label
-                            Text="{Binding PlaybackTimeLabel}"
-                            TextColor="#476257"
-                            VerticalOptions="Center" />
-                        <Button
-                            Grid.Column="1"
-                            BackgroundColor="#0B4D3A"
-                            Command="{Binding TogglePlayCommand}"
-                            CommandParameter="{Binding SelectedFile}"
-                            CornerRadius="12"
-                            HeightRequest="42"
-                            HorizontalOptions="End"
-                            Text="Play / Pause"
-                            TextColor="White"
-                            WidthRequest="140" />
-                    </Grid>
-                </VerticalStackLayout>
-            </Border>
+                            FontAttributes="Bold"
+                            Text="Аудіоконтролер"
+                            TextColor="#14251D" />
+                        <Label
+                            FontSize="14"
+                            Text="{Binding SelectedFile.FileName, TargetNullValue='Немає вибраного файлу'}"
+                            TextColor="#476257" />
+                        <Slider
+                            IsEnabled="False"
+                            Maximum="1"
+                            Value="{Binding PlaybackProgress}" />
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                            <Label
+                                Text="{Binding PlaybackTimeLabel}"
+                                TextColor="#476257"
+                                VerticalOptions="Center" />
+                            <Button
+                                Grid.Column="1"
+                                BackgroundColor="#0B4D3A"
+                                Command="{Binding TogglePlayCommand}"
+                                CommandParameter="{Binding SelectedFile}"
+                                CornerRadius="12"
+                                HeightRequest="42"
+                                HorizontalOptions="End"
+                                Text="Play / Pause"
+                                TextColor="White"
+                                WidthRequest="140" />
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
 
-            <Button
-                Grid.Row="4"
-                BackgroundColor="#0B4D3A"
-                Command="{Binding NavigateToDebtorsCommand}"
-                CornerRadius="14"
-                HeightRequest="52"
-                Text="Далі →"
-                TextColor="White" />
+                <Border
+                    BackgroundColor="White"
+                    Padding="20"
+                    Stroke="#D9E6DE"
+                    StrokeShape="RoundRectangle 18">
+                    <VerticalStackLayout Spacing="10">
+                        <Label
+                            FontAttributes="Bold"
+                            Text="Затримка перед запуском аудіо"
+                            TextColor="#14251D" />
+                        <Label
+                            FontSize="13"
+                            Text="Вкажіть кількість секунд після з'єднання з абонентом. Значення зберігається автоматично."
+                            TextColor="#476257" />
+                        <Entry
+                            Keyboard="Numeric"
+                            Placeholder="15"
+                            PlaceholderColor="#6A7F73"
+                            Text="{Binding AudioStartDelayInput}"
+                            TextColor="Black" />
+                        <Label
+                            FontSize="12"
+                            IsVisible="{Binding HasAudioStartDelayError}"
+                            Text="{Binding AudioStartDelayValidationMessage}"
+                            TextColor="#B42318" />
+                    </VerticalStackLayout>
+                </Border>
 
-            <Button
-                Grid.Row="5"
-                BackgroundColor="White"
-                BorderColor="#B42318"
-                BorderWidth="1"
-                Command="{Binding ShowExitConfirmationCommand}"
-                CornerRadius="14"
-                HeightRequest="52"
-                Text="Вийти"
-                TextColor="#B42318"
-                VerticalOptions="End" />
-        </Grid>
+                <Button
+                    BackgroundColor="#0B4D3A"
+                    Command="{Binding NavigateToDebtorsCommand}"
+                    CornerRadius="14"
+                    HeightRequest="52"
+                    Text="Далі →"
+                    TextColor="White" />
+
+                <Button
+                    BackgroundColor="White"
+                    BorderColor="#B42318"
+                    BorderWidth="1"
+                    Command="{Binding ShowExitConfirmationCommand}"
+                    CornerRadius="14"
+                    HeightRequest="52"
+                    Text="Вийти"
+                    TextColor="#B42318" />
+            </VerticalStackLayout>
+        </ScrollView>
     </Grid>
 </ContentPage>

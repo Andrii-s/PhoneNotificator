@@ -51,10 +51,12 @@
                         <Label
                             FontAttributes="Bold"
                             Text="Режим оповіщення"
-                            TextColor="#14251D" />
+                            TextColor="Black" />
                         <Picker
                             ItemsSource="{Binding SendModes}"
-                            SelectedIndex="{Binding SelectedModeIndex}" />
+                            SelectedIndex="{Binding SelectedModeIndex}"
+                            TextColor="Black"
+                            TitleColor="Black" />
                     </VerticalStackLayout>
                 </Border>
 
@@ -123,7 +125,9 @@
                         <Entry
                             Keyboard="Telephone"
                             Placeholder="+380931231212"
-                            Text="{Binding ManualPhoneNumber}" />
+                            PlaceholderColor="#6A7F73"
+                            Text="{Binding ManualPhoneNumber}"
+                            TextColor="Black" />
                         <Button
                             BackgroundColor="#0B4D3A"
                             Command="{Binding StartSingleCallCommand}"
@@ -147,7 +151,9 @@
                             AutoSize="TextChanges"
                             HeightRequest="180"
                             Placeholder="+380931231212&#10;+380671234567"
-                            Text="{Binding ListPhoneNumbers}" />
+                            PlaceholderColor="#6A7F73"
+                            Text="{Binding ListPhoneNumbers}"
+                            TextColor="Black" />
                         <Button
                             BackgroundColor="#0B4D3A"
                             Command="{Binding StartCallsFromListCommand}"

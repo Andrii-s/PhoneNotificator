@@ -6,9 +6,24 @@ public sealed class FakePreferencesService : IPreferencesService
 {
     private readonly Dictionary<string, string> _storage = new(StringComparer.Ordinal);
 
+    public int? GetInt(string key)
+    {
+        if (!_storage.TryGetValue(key, out var value))
+        {
+            return null;
+        }
+
+        return int.TryParse(value, out var parsedValue) ? parsedValue : null;
+    }
+
     public string? GetString(string key)
     {
         return _storage.TryGetValue(key, out var value) ? value : null;
+    }
+
+    public void SetInt(string key, int value)
+    {
+        _storage[key] = value.ToString();
     }
 
     public void SetString(string key, string value)

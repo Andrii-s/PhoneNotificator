@@ -25,7 +25,8 @@ public sealed class CallServiceTests
                 phoneDialer,
                 callMonitor,
                 new NoOpAudioInjectionServiceStub(),
-                new FakeCallPermissionService());
+                new FakeCallPermissionService(),
+                new AppSession { CallAudioDelaySeconds = 0 });
 
             CallReport? report = null;
             await service.MakeCallAsync("+380001112233", audioFilePath, currentReport =>
@@ -46,7 +47,7 @@ public sealed class CallServiceTests
     }
 
     [Fact]
-    public async Task MakeCallAsync_WaitsAtLeastOneSecondBeforePlayingAudio()
+    public async Task MakeCallAsync_WaitsConfiguredDelayBeforePlayingAudio()
     {
         var audioFilePath = Path.GetTempFileName();
         await File.WriteAllBytesAsync(audioFilePath, [1, 2, 3]);
@@ -63,6 +64,7 @@ public sealed class CallServiceTests
             var callMonitor = new FakeCallMonitor
             {
                 OnConnected = () => connectedAt = DateTimeOffset.UtcNow,
+                EndedDelay = TimeSpan.FromMilliseconds(1200),
             };
 
             var service = new CallService(
@@ -70,7 +72,8 @@ public sealed class CallServiceTests
                 new PhoneDialerSpy(),
                 callMonitor,
                 new NoOpAudioInjectionServiceStub(),
-                new FakeCallPermissionService());
+                new FakeCallPermissionService(),
+                new AppSession { CallAudioDelaySeconds = 1 });
 
             await service.MakeCallAsync("+380001112233", audioFilePath, _ => Task.CompletedTask);
 
@@ -97,7 +100,8 @@ public sealed class CallServiceTests
                 new PhoneDialerSpy(),
                 new FakeCallMonitor(),
                 new NoOpAudioInjectionServiceStub(),
-                new FakeCallPermissionService());
+                new FakeCallPermissionService(),
+                new AppSession { CallAudioDelaySeconds = 0 });
 
             var reportCount = 0;
             await service.MakeCallsSequentialAsync(
@@ -125,7 +129,8 @@ public sealed class CallServiceTests
             new PhoneDialerSpy(),
             new FakeCallMonitor(),
             new NoOpAudioInjectionServiceStub(),
-            new FakeCallPermissionService());
+            new FakeCallPermissionService(),
+            new AppSession { CallAudioDelaySeconds = 0 });
 
         var act = () => service.MakeCallAsync("123", "missing.mp3", _ => Task.CompletedTask);
 

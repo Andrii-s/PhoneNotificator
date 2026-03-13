@@ -9,6 +9,7 @@ public sealed class AndroidAudioInjector : IAudioInjectionService
     private readonly AudioManager? _audioManager;
     private Mode _previousMode;
     private bool _previousSpeakerphoneState;
+    private bool _previousMicrophoneMuteState;
 
     public AndroidAudioInjector()
     {
@@ -24,9 +25,11 @@ public sealed class AndroidAudioInjector : IAudioInjectionService
 
         _previousMode = _audioManager.Mode;
         _previousSpeakerphoneState = _audioManager.SpeakerphoneOn;
+        _previousMicrophoneMuteState = _audioManager.MicrophoneMute;
 
         _audioManager.Mode = Mode.InCommunication;
-        _audioManager.SpeakerphoneOn = false;
+        _audioManager.MicrophoneMute = false;
+        _audioManager.SpeakerphoneOn = true;
         return Task.CompletedTask;
     }
 
@@ -39,6 +42,7 @@ public sealed class AndroidAudioInjector : IAudioInjectionService
 
         _audioManager.Mode = _previousMode;
         _audioManager.SpeakerphoneOn = _previousSpeakerphoneState;
+        _audioManager.MicrophoneMute = _previousMicrophoneMuteState;
         return Task.CompletedTask;
     }
 }

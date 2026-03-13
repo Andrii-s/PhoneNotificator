@@ -21,6 +21,10 @@
     <TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug' and $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
+    <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
+  </PropertyGroup>
+
   <ItemGroup>
     <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#0B4D3A" />
     <MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#0B4D3A" BaseSize="128,128" />
@@ -39,7 +43,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PhoneNotificator.Core\PhoneNotificator.Core.csproj" />
+    <ProjectReference Include="..\PhoneNotificator.Core\PhoneNotificator.Core.csproj">
+      <SetTargetFramework>TargetFramework=net9.0</SetTargetFramework>
+      <SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
+      <GlobalPropertiesToRemove>RuntimeIdentifier;SelfContained</GlobalPropertiesToRemove>
+    </ProjectReference>
   </ItemGroup>
 
 </Project>

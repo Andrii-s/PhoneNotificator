@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Material 3 colour resources.
+    These mirror the Kotlin Color.kt values so they can be referenced
+    from XML themes and legacy views if needed.
+-->
+<resources>
+
+    <!-- ── Primary ──────────────────────────────────────────────────────────── -->
+    <color name="blue_10">#FF001D36</color>
+    <color name="blue_20">#FF003258</color>
+    <color name="blue_30">#FF00497C</color>
+    <color name="blue_40">#FF0060A3</color>
+    <color name="blue_80">#FF9ECAFF</color>
+    <color name="blue_90">#FFD1E4FF</color>
+
+    <!-- ── Secondary ────────────────────────────────────────────────────────── -->
+    <color name="dark_blue_10">#FF0D1B2A</color>
+    <color name="dark_blue_20">#FF1A2E45</color>
+    <color name="dark_blue_30">#FF274460</color>
+    <color name="dark_blue_40">#FF345B7C</color>
+    <color name="dark_blue_80">#FFA8C8E8</color>
+    <color name="dark_blue_90">#FFD4E4F4</color>
+
+    <!-- ── Tertiary ──────────────────────────────────────────────────────────── -->
+    <color name="teal_10">#FF001F24</color>
+    <color name="teal_20">#FF00363D</color>
+    <color name="teal_30">#FF004F58</color>
+    <color name="teal_40">#FF006874</color>
+    <color name="teal_80">#FF4DD8E4</color>
+    <color name="teal_90">#FFA2EEFF</color>
+
+    <!-- ── Error ─────────────────────────────────────────────────────────────── -->
+    <color name="red_10">#FF410002</color>
+    <color name="red_20">#FF690005</color>
+    <color name="red_40">#FFBA1A1A</color>
+    <color name="red_80">#FFFFB4AB</color>
+    <color name="red_90">#FFFFDAD6</color>
+
+
+    <!-- ── Neutral ───────────────────────────────────────────────────────────── -->
+    <color name="grey_10">#FF1A1C1E</color>
+    <color name="grey_20">#FF2F3033</color>
+    <color name="grey_90">#FFE2E2E5</color>
+    <color name="grey_95">#FFF0F0F3</color>
+    <color name="grey_99">#FFFCFCFF</color>
+
+    <!-- ── Neutral Variant ───────────────────────────────────────────────────── -->
+    <color name="blue_grey_10">#FF171C22</color>
+    <color name="blue_grey_20">#FF2C3138</color>
+    <color name="blue_grey_30">#FF42474E</color>
+    <color name="blue_grey_50">#FF72787F</color>
+    <color name="blue_grey_60">#FF8B9198</color>
+    <color name="blue_grey_80">#FFBCC7CE</color>
+    <color name="blue_grey_90">#FFD8E3EA</color>
+
+    <!-- ── Semantic aliases (used by themes.xml) ────────────────────────────── -->
+    <color name="splash_background">@color/grey_99</color>
+    <color name="colorPrimary">@color/blue_40</color>
+    <color name="colorPrimaryDark">@color/blue_30</color>
+    <color name="colorAccent">@color/teal_40</color>
+
+</resources>

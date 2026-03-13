@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- ===== App ===== -->
+    <string name="app_name">AutoDialer</string>
+
+    <!-- ===== Splash ===== -->
+    <string name="splash_version">Версія %1$s</string>
+    <string name="splash_loading">Завантаження…</string>
+
+    <!-- ===== Settings ===== -->
+    <string name="settings_title">Налаштування</string>
+    <string name="settings_server_url">URL сервера</string>
+    <string name="settings_username">Логін</string>
+    <string name="settings_password">Пароль</string>
+    <string name="settings_audio_file">Аудіофайл (шлях або URI)</string>
+    <string name="settings_start_dialing">Розпочати обдзвін</string>
+    <string name="settings_saved">Налаштування збережено</string>
+
+    <!-- ===== Debtors ===== -->
+    <string name="debtors_title">Список боржників</string>
+    <string name="debtors_empty">Список порожній</string>
+    <string name="debtors_loading">Завантаження контактів…</string>
+    <string name="debtor_status_pending">Очікує</string>
+    <string name="debtor_status_calling">Дзвонимо…</string>
+    <string name="debtor_status_done">Виконано</string>
+    <string name="debtor_status_failed">Помилка</string>
+    <string name="debtor_status_skipped">Пропущено</string>
+
+    <!-- ===== Confirm Logout ===== -->
+    <string name="logout_title">Вийти з акаунту?</string>
+    <string name="logout_message">Ви справді хочете вийти? Поточний сеанс обдзвону буде завершено.</string>
+    <string name="logout_warning">Усі незбережені дані будуть втрачені.</string>
+
+    <!-- ===== Common actions ===== -->
+    <string name="action_ok">OK</string>
+    <string name="action_cancel">Скасувати</string>
+    <string name="action_logout">Вийти</string>
+    <string name="action_back">Назад</string>
+    <string name="action_retry">Повторити</string>
+    <string name="action_stop">Зупинити</string>
+    <string name="action_pause">Пауза</string>
+    <string name="action_resume">Продовжити</string>
+    <string name="action_save">Зберегти</string>
+
+    <!-- ===== Notification ===== -->
+    <string name="notification_channel_name">Обдзвін</string>
+    <string name="notification_channel_description">Сповіщення про поточний сеанс автоматичного обдзвону</string>
+    <string name="notification_title">AutoDialer активний</string>
+    <string name="notification_text">Виконується автоматичний обдзвін контактів…</string>
+
+    <!-- ===== Settings (Audio Player) ===== -->
+    <string name="settings_load_audio">Завантажити аудіофайл</string>
+    <string name="settings_no_audio_files">Немає аудіофайлів. Додайте перший файл.</string>
+    <string name="settings_player_section">Програвач</string>
+    <string name="settings_next">Далі →</string>
+    <string name="settings_permission_rationale">Для вибору аудіофайлу потрібен дозвіл на читання медіафайлів</string>
+    <string name="settings_grant_permission">Надати дозвіл</string>
+    <string name="settings_delete_file">Видалити файл</string>
+    <string name="settings_skip_back">-10 сек</string>
+    <string name="settings_skip_forward">+10 сек</string>
+
+    <!-- ===== Debtors (extended) ===== -->
+    <string name="debtors_get_list">Отримати список боржників</string>
+    <string name="debtors_start_calls">Почати дзвінки</string>
+    <string name="debtors_stop_calls">Зупинити дзвінки</string>
+    <string name="debtors_phone_number">Номер телефону</string>
+    <string name="debtors_start_call">Почати дзвінок</string>
+    <string name="debtors_number_list">Список номерів (по одному на рядок)</string>
+    <string name="debtors_tab_debtors">Боржники</string>
+    <string name="debtors_tab_manual">Ввести номер</string>
+    <string name="debtors_tab_list">Список номерів</string>
+    <string name="debtors_col_num">№</string>
+    <string name="debtors_col_name">ПІБ</string>
+    <string name="debtors_col_phone">Номер</string>
+    <string name="debtors_col_debt">Борг</string>
+    <string name="debtors_dialing_progress">Дзвінок: %1$s</string>
+
+    <!-- ===== Call Log ===== -->
+    <string name="call_log_title">Лог дзвінків</string>
+    <string name="call_log_empty">Немає записів дзвінків</string>
+
+    <!-- ===== Confirm Logout ===== -->
+    <string name="logout_question">Ви дійсно готові вийти?</string>
+    <string name="confirm_no">Ні</string>
+    <string name="confirm_yes">Так</string>
+
+    <!-- ===== Notification (extended) ===== -->
+    <string name="notification_calling">Дзвінок %1$d з %2$d: %3$s</string>
+    <string name="notification_dialing_done">Обдзвін завершено</string>
+    <string name="notification_stop_action">Зупинити</string>
+
+    <!-- ===== Permissions ===== -->
+    <string name="permission_call_phone_rationale">Для здійснення дзвінків потрібен дозвіл на виклики</string>
+    <string name="permission_read_phone_rationale">Для відстеження стану дзвінків потрібен дозвіл READ_PHONE_STATE</string>
+    <string name="permission_grant">Надати дозвіл</string>
+
+    <!-- ===== Errors ===== -->
+    <string name="error_network">Помилка мережі. Перевірте підключення.</string>
+    <string name="error_server">Помилка сервера. Спробуйте пізніше.</string>
+    <string name="error_permission_denied">Дозвіл відхилено. Надайте необхідні дозволи в налаштуваннях.</string>
+    <string name="error_unknown">Невідома помилка. Зверніться до підтримки.</string>
+
+</resources>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="PhoneNotificator.Views.SplashPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Shell.NavBarIsVisible="False"
+    BackgroundColor="#0B4D3A">
+
+    <Grid Padding="24">
+        <VerticalStackLayout
+            HorizontalOptions="Center"
+            VerticalOptions="Center"
+            Spacing="18">
+            <Border
+                BackgroundColor="#1AFFFFFF"
+                Padding="24"
+                StrokeThickness="0"
+                StrokeShape="RoundRectangle 24">
+                <Label
+                    FontSize="56"
+                    HorizontalTextAlignment="Center"
+                    Text="☎"
+                    TextColor="White" />
+            </Border>
+
+            <Label
+                FontAttributes="Bold"
+                FontSize="32"
+                HorizontalTextAlignment="Center"
+                Text="AutoDialer"
+                TextColor="White" />
+
+            <Label
+                FontSize="14"
+                HorizontalTextAlignment="Center"
+                Opacity="0.75"
+                Text="v1.0.0"
+                TextColor="White" />
+
+            <ActivityIndicator
+                Margin="0,18,0,0"
+                Color="White"
+                IsRunning="True" />
+        </VerticalStackLayout>
+    </Grid>
+</ContentPage>

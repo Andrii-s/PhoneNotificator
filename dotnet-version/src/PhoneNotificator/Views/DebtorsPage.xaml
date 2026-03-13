@@ -3,6 +3,7 @@
     x:Class="PhoneNotificator.Views.DebtorsPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:models="clr-namespace:PhoneNotificator.Core.Models;assembly=PhoneNotificator.Core"
     xmlns:viewModels="clr-namespace:PhoneNotificator.Core.ViewModels;assembly=PhoneNotificator.Core"
     x:DataType="viewModels:DebtorsViewModel"
     Shell.NavBarIsVisible="False"
@@ -17,34 +18,178 @@
                 TextColor="White" />
         </Border>
 
-        <VerticalStackLayout Grid.Row="1" Padding="24" Spacing="18">
-            <Border
-                BackgroundColor="White"
-                Padding="20"
-                Stroke="#D9E6DE"
-                StrokeShape="RoundRectangle 18">
-                <VerticalStackLayout Spacing="12">
-                    <Label
-                        FontAttributes="Bold"
-                        FontSize="18"
-                        Text="UI-заготовка"
-                        TextColor="#14251D" />
-                    <Label
-                        FontSize="14"
-                        LineBreakMode="WordWrap"
-                        Text="{Binding StatusMessage}"
-                        TextColor="#476257" />
-                </VerticalStackLayout>
-            </Border>
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="24" Spacing="16">
+                <ActivityIndicator
+                    Color="#0B4D3A"
+                    HorizontalOptions="Center"
+                    IsRunning="{Binding IsBusy}"
+                    IsVisible="{Binding IsBusy}" />
 
-            <Button
-                BackgroundColor="White"
-                BorderColor="#0B4D3A"
-                BorderWidth="1"
-                CornerRadius="14"
-                HeightRequest="52"
-                Text="Повернутись"
-                TextColor="#0B4D3A" />
-        </VerticalStackLayout>
+                <Border
+                    BackgroundColor="White"
+                    Padding="18"
+                    Stroke="#D9E6DE"
+                    StrokeShape="RoundRectangle 18">
+                    <VerticalStackLayout Spacing="6">
+                        <Label
+                            FontAttributes="Bold"
+                            Text="Обране аудіо"
+                            TextColor="#14251D" />
+                        <Label
+                            Text="{Binding SelectedAudioFileName}"
+                            TextColor="#476257" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border
+                    BackgroundColor="White"
+                    Padding="18"
+                    Stroke="#D9E6DE"
+                    StrokeShape="RoundRectangle 18">
+                    <VerticalStackLayout Spacing="12">
+                        <Label
+                            FontAttributes="Bold"
+                            Text="Режим оповіщення"
+                            TextColor="#14251D" />
+                        <Picker
+                            ItemsSource="{Binding SendModes}"
+                            SelectedIndex="{Binding SelectedModeIndex}" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Label
+                    Text="{Binding ErrorMessage}"
+                    TextColor="#B42318" />
+
+                <Border
+                    BackgroundColor="White"
+                    IsVisible="{Binding IsDebtorsMode}"
+                    Padding="18"
+                    Stroke="#D9E6DE"
+                    StrokeShape="RoundRectangle 18">
+                    <VerticalStackLayout Spacing="12">
+                        <Label
+                            FontAttributes="Bold"
+                            Text="Список боржників"
+                            TextColor="#14251D" />
+                        <Button
+                            BackgroundColor="White"
+                            BorderColor="#0B4D3A"
+                            BorderWidth="1"
+                            Command="{Binding FetchDebtorsCommand}"
+                            Text="Отримати список боржників"
+                            TextColor="#0B4D3A" />
+                        <CollectionView
+                            EmptyView="Список ще не завантажено."
+                            HeightRequest="220"
+                            ItemsSource="{Binding Debtors}">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="models:Debtor">
+                                    <Grid Padding="0,10" ColumnDefinitions="*,Auto">
+                                        <VerticalStackLayout Spacing="2">
+                                            <Label
+                                                FontAttributes="Bold"
+                                                Text="{Binding PhoneNumber}"
+                                                TextColor="#14251D" />
+                                            <Label
+                                                FontSize="12"
+                                                Text="{Binding Name}"
+                                                TextColor="#6A7F73" />
+                                        </VerticalStackLayout>
+                                    </Grid>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                        <Button
+                            BackgroundColor="#0B4D3A"
+                            Command="{Binding StartCallsCommand}"
+                            Text="Почати дзвінки"
+                            TextColor="White" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border
+                    BackgroundColor="White"
+                    IsVisible="{Binding IsManualMode}"
+                    Padding="18"
+                    Stroke="#D9E6DE"
+                    StrokeShape="RoundRectangle 18">
+                    <VerticalStackLayout Spacing="12">
+                        <Label
+                            FontAttributes="Bold"
+                            Text="Ввести номер вручну"
+                            TextColor="#14251D" />
+                        <Entry
+                            Keyboard="Telephone"
+                            Placeholder="+380931231212"
+                            Text="{Binding ManualPhoneNumber}" />
+                        <Button
+                            BackgroundColor="#0B4D3A"
+                            Command="{Binding StartSingleCallCommand}"
+                            Text="Почати дзвінок"
+                            TextColor="White" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border
+                    BackgroundColor="White"
+                    IsVisible="{Binding IsListMode}"
+                    Padding="18"
+                    Stroke="#D9E6DE"
+                    StrokeShape="RoundRectangle 18">
+                    <VerticalStackLayout Spacing="12">
+                        <Label
+                            FontAttributes="Bold"
+                            Text="Введення номерів списком"
+                            TextColor="#14251D" />
+                        <Editor
+                            AutoSize="TextChanges"
+                            HeightRequest="180"
+                            Placeholder="+380931231212&#10;+380671234567"
+                            Text="{Binding ListPhoneNumbers}" />
+                        <Button
+                            BackgroundColor="#0B4D3A"
+                            Command="{Binding StartCallsFromListCommand}"
+                            Text="Почати дзвінки"
+                            TextColor="White" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border
+                    BackgroundColor="White"
+                    Padding="18"
+                    Stroke="#D9E6DE"
+                    StrokeShape="RoundRectangle 18">
+                    <VerticalStackLayout Spacing="12">
+                        <Label
+                            FontAttributes="Bold"
+                            Text="Журнал виконання"
+                            TextColor="#14251D" />
+                        <CollectionView
+                            EmptyView="Журнал поки порожній."
+                            HeightRequest="220"
+                            ItemsSource="{Binding CallLog}">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="x:String">
+                                    <Label
+                                        Padding="0,6"
+                                        Text="{Binding .}"
+                                        TextColor="#476257" />
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Button
+                    BackgroundColor="White"
+                    BorderColor="#0B4D3A"
+                    BorderWidth="1"
+                    Command="{Binding GoBackCommand}"
+                    Text="Повернутись"
+                    TextColor="#0B4D3A" />
+            </VerticalStackLayout>
+        </ScrollView>
     </Grid>
 </ContentPage>

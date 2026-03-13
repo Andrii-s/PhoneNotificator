@@ -7,6 +7,7 @@ using PhoneNotificator.Core.ViewModels;
 using PhoneNotificator.Services;
 using PhoneNotificator.Views;
 using Plugin.Maui.Audio;
+using Polly;
 
 namespace PhoneNotificator;
 
@@ -35,7 +36,17 @@ public static class MauiProgram
         builder.Services.AddSingleton<IToastService, ToastService>();
         builder.Services.AddSingleton<IConfirmationService, PopupConfirmationService>();
         builder.Services.AddSingleton<IAppCloser, AppCloser>();
+        builder.Services.AddSingleton<ICallService, PreviewCallService>();
         builder.Services.AddSingleton<AppShell>();
+
+        builder.Services
+            .AddHttpClient<IApiService, ApiService>(client =>
+            {
+                client.BaseAddress = new Uri("https://itproject.com");
+                client.Timeout = TimeSpan.FromSeconds(30);
+            })
+            .AddTransientHttpErrorPolicy(policyBuilder =>
+                policyBuilder.WaitAndRetryAsync(3, attempt => TimeSpan.FromSeconds(Math.Pow(2, attempt))));
 
         builder.Services.AddTransient<SettingsViewModel>();
         builder.Services.AddTransient<DebtorsViewModel>();

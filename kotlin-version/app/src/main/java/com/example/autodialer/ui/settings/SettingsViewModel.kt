@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.autodialer.domain.model.AudioFile
 import com.example.autodialer.domain.repository.AudioRepository
+import com.example.autodialer.data.local.AppPreferences
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -32,6 +33,7 @@ import javax.inject.Inject
 class SettingsViewModel @Inject constructor(
     private val audioRepository: AudioRepository,
     @ApplicationContext private val context: Context,
+    private val appPreferences: AppPreferences,
 ) : ViewModel() {
 
     // -------------------------------------------------------------------------
@@ -49,6 +51,10 @@ class SettingsViewModel @Inject constructor(
         val duration: Int = 0,
         val isLoading: Boolean = false,
         val error: String? = null,
+        /** Raw text currently shown in the audio delay input field. */
+        val audioDelayInput: String = AppPreferences.DEFAULT_AUDIO_DELAY_SECONDS.toString(),
+        /** True when the field contains an invalid (non-integer / negative) value. */
+        val audioDelayError: Boolean = false,
     )
 
     private val _uiState = MutableStateFlow(SettingsUiState())
@@ -67,6 +73,8 @@ class SettingsViewModel @Inject constructor(
 
     init {
         loadAudioFiles()
+        // Load persisted delay from SharedPreferences
+        _uiState.update { it.copy(audioDelayInput = appPreferences.audioDelaySeconds.toString()) }
     }
 
     // -------------------------------------------------------------------------
@@ -222,6 +230,27 @@ class SettingsViewModel @Inject constructor(
     /** Clears a previously shown error message. */
     fun onErrorDismissed() {
         _uiState.update { it.copy(error = null) }
+    }
+
+    /**
+     * Called on every keystroke in the audio delay input field.
+     * Validates and persists immediately when valid.
+     *
+     * !! ВАЖЛИВО: Використовується AutoDialerService для затримки перед TX-аудіо !!
+     */
+    fun onAudioDelayChanged(text: String) {
+        val trimmed = text.trim()
+        val parsed = trimmed.toIntOrNull()
+        val isValid = parsed != null && parsed >= 0
+        _uiState.update {
+            it.copy(
+                audioDelayInput = text,
+                audioDelayError = trimmed.isNotEmpty() && !isValid,
+            )
+        }
+        if (isValid) {
+            appPreferences.audioDelaySeconds = parsed!!
+        }
     }
 
     // -------------------------------------------------------------------------

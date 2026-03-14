@@ -3,6 +3,7 @@ package com.example.autodialer.ui.settings
 import android.content.Context
 import android.net.Uri
 import app.cash.turbine.test
+import com.example.autodialer.data.local.AppPreferences
 import com.example.autodialer.domain.model.AudioFile
 import com.example.autodialer.domain.repository.AudioRepository
 import kotlinx.coroutines.Dispatchers
@@ -52,6 +53,7 @@ class SettingsViewModelTest {
 
     private lateinit var audioRepository: AudioRepository
     private lateinit var context: Context
+    private lateinit var appPreferences: AppPreferences
 
     private lateinit var viewModel: SettingsViewModel
 
@@ -65,11 +67,15 @@ class SettingsViewModelTest {
 
         audioRepository = mock()
         context         = mock()
+        appPreferences  = mock()
+
+        // Default stub for audioDelaySeconds
+        whenever(appPreferences.audioDelaySeconds).thenReturn(AppPreferences.DEFAULT_AUDIO_DELAY_SECONDS)
 
         // Default stub: repository emits an empty list so loadAudioFiles() does not hang.
         whenever(audioRepository.getAllAudioFiles()).thenReturn(flowOf(emptyList()))
 
-        viewModel = SettingsViewModel(audioRepository, context)
+        viewModel = SettingsViewModel(audioRepository, context, appPreferences)
     }
 
     @After

@@ -1,6 +1,7 @@
 using FluentAssertions;
 using Moq;
 using PhoneNotificator.Core.Abstractions;
+using PhoneNotificator.Core.Configuration;
 using PhoneNotificator.Core.Models;
 using PhoneNotificator.Core.Services.Interfaces;
 using PhoneNotificator.Core.ViewModels;
@@ -123,6 +124,56 @@ public sealed class SettingsViewModelTests
     }
 
     [Fact]
+    public void Constructor_LoadsSavedDelayIntoSessionAndInput()
+    {
+        var audioFileService = new Mock<IAudioFileService>();
+        audioFileService.Setup(service => service.GetAllFiles()).Returns([]);
+        var preferences = new FakePreferencesService();
+        preferences.SetInt(AppPreferenceKeys.CallAudioDelaySeconds, 21);
+        var session = new AppSession();
+
+        var viewModel = CreateViewModel(audioFileService.Object, appSession: session, preferencesService: preferences);
+
+        viewModel.AudioStartDelayInput.Should().Be("21");
+        session.CallAudioDelaySeconds.Should().Be(21);
+    }
+
+    [Fact]
+    public void AudioStartDelayInput_WhenValid_PersistsValue()
+    {
+        var audioFileService = new Mock<IAudioFileService>();
+        audioFileService.Setup(service => service.GetAllFiles()).Returns([]);
+        var preferences = new FakePreferencesService();
+        var session = new AppSession();
+        var viewModel = CreateViewModel(audioFileService.Object, appSession: session, preferencesService: preferences);
+
+        viewModel.AudioStartDelayInput = "9";
+
+        preferences.GetInt(AppPreferenceKeys.CallAudioDelaySeconds).Should().Be(9);
+        session.CallAudioDelaySeconds.Should().Be(9);
+        viewModel.HasAudioStartDelayError.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task NavigateToDebtorsCommand_WithInvalidDelay_ShowsToastAndDoesNotNavigate()
+    {
+        var file = new AudioFile { Id = "1", FileName = "message.mp3", FilePath = "file.mp3" };
+        var audioFileService = new Mock<IAudioFileService>();
+        audioFileService.Setup(service => service.GetAllFiles()).Returns([file]);
+        var toast = new RecordingToastService();
+        var navigation = new FakeNavigationService();
+        var viewModel = CreateViewModel(audioFileService.Object, toastService: toast, navigationService: navigation);
+        viewModel.SelectedFile = file;
+        viewModel.AudioStartDelayInput = "abc";
+
+        await viewModel.NavigateToDebtorsCommand.ExecuteAsync(null);
+
+        toast.Messages.Should().ContainSingle(message => message.Contains("затримки"));
+        navigation.LastRoute.Should().BeNull();
+        viewModel.HasAudioStartDelayError.Should().BeTrue();
+    }
+
+    [Fact]
     public async Task ShowExitConfirmationCommand_WhenConfirmed_QuitsApp()
     {
         var audioFileService = new Mock<IAudioFileService>();
@@ -170,7 +221,8 @@ public sealed class SettingsViewModelTests
         IToastService? toastService = null,
         IConfirmationService? confirmationService = null,
         IAppCloser? appCloser = null,
-        IAppSession? appSession = null)
+        IAppSession? appSession = null,
+        IPreferencesService? preferencesService = null)
     {
         return new SettingsViewModel(
             audioFileService,
@@ -180,6 +232,7 @@ public sealed class SettingsViewModelTests
             toastService ?? new RecordingToastService(),
             confirmationService ?? new FakeConfirmationService(),
             appCloser ?? new AppCloserSpy(),
-            appSession ?? new AppSession());
+            appSession ?? new AppSession(),
+            preferencesService ?? new FakePreferencesService());
     }
 }

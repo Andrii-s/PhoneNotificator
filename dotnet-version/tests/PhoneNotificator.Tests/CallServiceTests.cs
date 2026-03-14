@@ -25,7 +25,8 @@ public sealed class CallServiceTests
                 phoneDialer,
                 callMonitor,
                 new NoOpAudioInjectionServiceStub(),
-                new FakeCallPermissionService());
+                new FakeCallPermissionService(),
+                new AppSession { CallAudioDelaySeconds = 0 });
 
             CallReport? report = null;
             await service.MakeCallAsync("+380001112233", audioFilePath, currentReport =>
@@ -46,7 +47,7 @@ public sealed class CallServiceTests
     }
 
     [Fact]
-    public async Task MakeCallAsync_WaitsAtLeastOneSecondBeforePlayingAudio()
+    public async Task MakeCallAsync_WaitsConfiguredDelayBeforePlayingAudio()
     {
         var audioFilePath = Path.GetTempFileName();
         await File.WriteAllBytesAsync(audioFilePath, [1, 2, 3]);
@@ -63,6 +64,7 @@ public sealed class CallServiceTests
             var callMonitor = new FakeCallMonitor
             {
                 OnConnected = () => connectedAt = DateTimeOffset.UtcNow,
+                EndedDelay = TimeSpan.FromMilliseconds(1200),
             };
 
             var service = new CallService(
@@ -70,7 +72,8 @@ public sealed class CallServiceTests
                 new PhoneDialerSpy(),
                 callMonitor,
                 new NoOpAudioInjectionServiceStub(),
-                new FakeCallPermissionService());
+                new FakeCallPermissionService(),
+                new AppSession { CallAudioDelaySeconds = 1 });
 
             await service.MakeCallAsync("+380001112233", audioFilePath, _ => Task.CompletedTask);
 
@@ -97,7 +100,8 @@ public sealed class CallServiceTests
                 new PhoneDialerSpy(),
                 new FakeCallMonitor(),
                 new NoOpAudioInjectionServiceStub(),
-                new FakeCallPermissionService());
+                new FakeCallPermissionService(),
+                new AppSession { CallAudioDelaySeconds = 0 });
 
             var reportCount = 0;
             await service.MakeCallsSequentialAsync(
@@ -118,6 +122,32 @@ public sealed class CallServiceTests
     }
 
     [Fact]
+    public async Task MakeCallAsync_WhenCallDoesNotConnect_ThrowsTimeoutException()
+    {
+        var audioFilePath = Path.GetTempFileName();
+        await File.WriteAllBytesAsync(audioFilePath, [1, 2, 3]);
+        try
+        {
+            var service = new CallService(
+                Mock.Of<IAudioPlayerService>(),
+                new PhoneDialerSpy(),
+                new NeverConnectingCallMonitor(),
+                new NoOpAudioInjectionServiceStub(),
+                new FakeCallPermissionService(),
+                new AppSession { CallAudioDelaySeconds = 0 },
+                TimeSpan.FromMilliseconds(100));
+
+            var act = () => service.MakeCallAsync("+380001112233", audioFilePath, _ => Task.CompletedTask);
+
+            await act.Should().ThrowAsync<TimeoutException>();
+        }
+        finally
+        {
+            File.Delete(audioFilePath);
+        }
+    }
+
+    [Fact]
     public async Task MakeCallAsync_MissingAudioFile_ThrowsFileNotFoundException()
     {
         var service = new CallService(
@@ -125,7 +155,8 @@ public sealed class CallServiceTests
             new PhoneDialerSpy(),
             new FakeCallMonitor(),
             new NoOpAudioInjectionServiceStub(),
-            new FakeCallPermissionService());
+            new FakeCallPermissionService(),
+            new AppSession { CallAudioDelaySeconds = 0 });
 
         var act = () => service.MakeCallAsync("123", "missing.mp3", _ => Task.CompletedTask);
 
@@ -137,5 +168,22 @@ public sealed class CallServiceTests
         public Task PrepareForCallAudioAsync(CancellationToken ct = default) => Task.CompletedTask;
 
         public Task RestoreAfterCallAsync(CancellationToken ct = default) => Task.CompletedTask;
+    }
+
+    private sealed class NeverConnectingCallMonitor : ICallMonitor
+    {
+        public void Reset()
+        {
+        }
+
+        public Task WaitForConnectedAsync(CancellationToken ct = default)
+        {
+            return Task.Delay(Timeout.InfiniteTimeSpan, ct);
+        }
+
+        public Task WaitForEndedAsync(CancellationToken ct = default)
+        {
+            return Task.Delay(Timeout.InfiniteTimeSpan, ct);
+        }
     }
 }

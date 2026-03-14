@@ -18,7 +18,6 @@ public sealed class AndroidCallPermissionService : ICallPermissionService
         [
             (Manifest.Permission.CallPhone, true),
             (Manifest.Permission.ReadPhoneState, true),
-            (Manifest.Permission.ReadCallLog, true),
         ];
     }
 }

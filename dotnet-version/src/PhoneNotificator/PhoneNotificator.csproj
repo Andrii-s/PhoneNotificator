@@ -11,8 +11,8 @@
     <Nullable>enable</Nullable>
     <ApplicationTitle>PhoneNotificator</ApplicationTitle>
     <ApplicationId>com.andriis.phonenotificator</ApplicationId>
-    <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
-    <ApplicationVersion>1</ApplicationVersion>
+    <ApplicationDisplayVersion>1.1.2</ApplicationDisplayVersion>
+    <ApplicationVersion>4</ApplicationVersion>
     <WindowsPackageType>None</WindowsPackageType>
     <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">15.0</SupportedOSPlatformVersion>
     <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">15.0</SupportedOSPlatformVersion>
@@ -23,6 +23,10 @@
 
   <PropertyGroup Condition="'$(Configuration)' == 'Debug' and $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
     <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
+    <VersionedAndroidPackageBaseName>$(ApplicationId)-v$(ApplicationDisplayVersion)-build$(ApplicationVersion)</VersionedAndroidPackageBaseName>
   </PropertyGroup>
 
   <ItemGroup>
@@ -49,5 +53,20 @@
       <GlobalPropertiesToRemove>RuntimeIdentifier;SelfContained</GlobalPropertiesToRemove>
     </ProjectReference>
   </ItemGroup>
+
+  <Target
+    Name="CopyVersionedAndroidPackages"
+    AfterTargets="SignAndroidPackage"
+    Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android' and Exists('$(ApkFileSigned)')">
+    <Copy
+      SourceFiles="$(ApkFileSigned)"
+      DestinationFiles="$(OutDir)$(VersionedAndroidPackageBaseName)-Signed.apk"
+      SkipUnchangedFiles="true" />
+    <Copy
+      Condition="Exists('$(ApkFile)')"
+      SourceFiles="$(ApkFile)"
+      DestinationFiles="$(OutDir)$(VersionedAndroidPackageBaseName).apk"
+      SkipUnchangedFiles="true" />
+  </Target>
 
 </Project>

@@ -1,7 +1,9 @@
 using System.Collections.ObjectModel;
+using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PhoneNotificator.Core.Abstractions;
+using PhoneNotificator.Core.Configuration;
 using PhoneNotificator.Core.Models;
 using PhoneNotificator.Core.Services.Interfaces;
 
@@ -17,6 +19,7 @@ public partial class SettingsViewModel : ObservableObject
     private readonly IConfirmationService _confirmationService;
     private readonly IAppCloser _appCloser;
     private readonly IAppSession _appSession;
+    private readonly IPreferencesService _preferencesService;
 
     private CancellationTokenSource? _progressMonitorCancellationTokenSource;
 
@@ -28,7 +31,8 @@ public partial class SettingsViewModel : ObservableObject
         IToastService toastService,
         IConfirmationService confirmationService,
         IAppCloser appCloser,
-        IAppSession appSession)
+        IAppSession appSession,
+        IPreferencesService preferencesService)
     {
         _audioFileService = audioFileService;
         _audioPlayerService = audioPlayerService;
@@ -38,11 +42,16 @@ public partial class SettingsViewModel : ObservableObject
         _confirmationService = confirmationService;
         _appCloser = appCloser;
         _appSession = appSession;
+        _preferencesService = preferencesService;
 
         Title = "Налаштування";
         PlaybackTimeLabel = "0:00 / 0:00";
         AudioFiles = new ObservableCollection<AudioFile>(_audioFileService.GetAllFiles());
         SelectedFile = AudioFiles.FirstOrDefault();
+
+        var callAudioDelaySeconds = LoadCallAudioDelaySeconds();
+        _appSession.CallAudioDelaySeconds = callAudioDelaySeconds;
+        audioStartDelayInput = callAudioDelaySeconds.ToString(CultureInfo.InvariantCulture);
 
         _audioPlayerService.PlaybackCompleted += OnPlaybackCompleted;
     }
@@ -66,6 +75,35 @@ public partial class SettingsViewModel : ObservableObject
 
     [ObservableProperty]
     private bool isBusy;
+
+    [ObservableProperty]
+    private string audioStartDelayInput = string.Empty;
+
+    [ObservableProperty]
+    private string audioStartDelayValidationMessage = string.Empty;
+
+    public bool HasAudioStartDelayError => !string.IsNullOrWhiteSpace(AudioStartDelayValidationMessage);
+
+    partial void OnAudioStartDelayInputChanged(string value)
+    {
+        var normalizedValue = value.Trim();
+        if (TryParseDelaySeconds(normalizedValue, out var delaySeconds))
+        {
+            AudioStartDelayValidationMessage = string.Empty;
+            _appSession.CallAudioDelaySeconds = delaySeconds;
+            _preferencesService.SetInt(AppPreferenceKeys.CallAudioDelaySeconds, delaySeconds);
+            return;
+        }
+
+        AudioStartDelayValidationMessage = string.IsNullOrWhiteSpace(normalizedValue)
+            ? "Вкажіть затримку в секундах."
+            : "Введіть ціле число секунд (0 або більше).";
+    }
+
+    partial void OnAudioStartDelayValidationMessageChanged(string value)
+    {
+        OnPropertyChanged(nameof(HasAudioStartDelayError));
+    }
 
     [RelayCommand]
     private async Task UploadFileAsync()
@@ -137,6 +175,12 @@ public partial class SettingsViewModel : ObservableObject
     [RelayCommand]
     private async Task NavigateToDebtorsAsync()
     {
+        if (!TryParseDelaySeconds(AudioStartDelayInput, out _))
+        {
+            await _toastService.ShowAsync("Перевірте параметр затримки перед запуском аудіо.");
+            return;
+        }
+
         if (SelectedFile is null)
         {
             await _toastService.ShowAsync("Спочатку оберіть аудіофайл.");
@@ -210,5 +254,23 @@ public partial class SettingsViewModel : ObservableObject
         return timeSpan.TotalHours >= 1
             ? timeSpan.ToString(@"h\:mm\:ss")
             : timeSpan.ToString(@"m\:ss");
+    }
+
+    private int LoadCallAudioDelaySeconds()
+    {
+        var savedDelay = _preferencesService.GetInt(AppPreferenceKeys.CallAudioDelaySeconds);
+        return savedDelay is >= 0 ? savedDelay.Value : AppDefaults.CallAudioDelaySeconds;
+    }
+
+    private static bool TryParseDelaySeconds(string? value, out int delaySeconds)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            delaySeconds = 0;
+            return false;
+        }
+
+        return int.TryParse(value, NumberStyles.None, CultureInfo.InvariantCulture, out delaySeconds)
+            && delaySeconds >= 0;
     }
 }

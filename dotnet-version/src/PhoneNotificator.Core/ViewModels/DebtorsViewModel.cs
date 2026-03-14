@@ -193,7 +193,7 @@ public partial class DebtorsViewModel : ObservableObject
 
         if (phoneNumberList.Count == 0)
         {
-            await _toastService.ShowAsync("Немає номерів для обдзвону.");
+            await _toastService.ShowAsync("Немає номерів для обзвону.");
             return;
         }
 
@@ -203,17 +203,17 @@ public partial class DebtorsViewModel : ObservableObject
             IsCallsRunning = true;
             ErrorMessage = string.Empty;
             SelectedAudioFileName = selectedAudioFile.FileName;
-            CallLog.Add($"[{DateTime.Now:HH:mm}] Старт обдзвону: {phoneNumberList.Count} номер(ів).");
+            CallLog.Add($"[{DateTime.Now:HH:mm}] Старт обзвону: {phoneNumberList.Count} номер(ів).");
 
             await _callService.MakeCallsSequentialAsync(
                 phoneNumberList,
                 selectedAudioFile.FilePath,
                 HandleCallCompletedAsync);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            ErrorMessage = "Не вдалося виконати дзвінки.";
-            CallLog.Add($"[{DateTime.Now:HH:mm}] Зупинка через помилку.");
+            ErrorMessage = BuildCallErrorMessage(ex);
+            CallLog.Add($"[{DateTime.Now:HH:mm}] Зупинка через помилку: {ErrorMessage}");
             await _toastService.ShowAsync(ErrorMessage);
         }
         finally
@@ -225,7 +225,7 @@ public partial class DebtorsViewModel : ObservableObject
 
     private async Task HandleCallCompletedAsync(CallReport report)
     {
-        CallLog.Add($"[{report.EndTime:HH:mm}] {report.PhoneNumber} — {report.DurationFormatted}");
+        CallLog.Add($"[{report.EndTime:HH:mm}] {report.PhoneNumber} - {report.DurationFormatted}");
 
         try
         {
@@ -236,5 +236,16 @@ public partial class DebtorsViewModel : ObservableObject
         {
             CallLog.Add($"[{DateTime.Now:HH:mm}] Не вдалося відправити звіт для {report.PhoneNumber}.");
         }
+    }
+
+    private static string BuildCallErrorMessage(Exception exception)
+    {
+        return exception switch
+        {
+            InvalidOperationException => "Не вдалося виконати дзвінок: не надано потрібні дозволи.",
+            TimeoutException => "Не вдалося виконати дзвінок: виклик не перейшов у стан з'єднання.",
+            NotSupportedException => "Не вдалося виконати дзвінок: на пристрої немає доступного call handler.",
+            _ => "Не вдалося виконати дзвінки.",
+        };
     }
 }

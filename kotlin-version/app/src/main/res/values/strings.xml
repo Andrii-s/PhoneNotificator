@@ -101,4 +101,10 @@
     <string name="error_permission_denied">Дозвіл відхилено. Надайте необхідні дозволи в налаштуваннях.</string>
     <string name="error_unknown">Невідома помилка. Зверніться до підтримки.</string>
 
+    <!-- ===== Audio Delay (вимога: не видаляти!) ===== -->
+    <!-- Затримка перед початком аудіо в TX-каналі. Зберігається в AppPreferences, зчитується AutoDialerService. -->
+    <string name="settings_audio_delay_label">Затримка перед запуском аудіо</string>
+    <string name="settings_audio_delay_unit">сек</string>
+    <string name="settings_audio_delay_error">Введіть ціле число ≥ 0</string>
+
 </resources>

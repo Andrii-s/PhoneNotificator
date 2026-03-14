@@ -14,8 +14,8 @@ android {
         applicationId = "com.example.autodialer"
         minSdk = 26
         targetSdk = 35
-        versionCode = 1
-        versionName = "1.0.0"
+        versionCode = 3
+        versionName = "1.2.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -70,6 +70,17 @@ android {
             isReturnDefaultValues = true
         }
     }
+
+    // Rename output APKs to include version name and build type.
+    // Example: AutoDialer-1.2.0-debug.apk / AutoDialer-1.2.0-release.apk
+    applicationVariants.all {
+        val variant = this
+        variant.outputs
+            .map { it as com.android.build.gradle.internal.api.BaseVariantOutputImpl }
+            .forEach { output ->
+                output.outputFileName = "AutoDialer-${variant.versionName}.apk"
+            }
+    }
 }
 
 dependencies {
@@ -115,6 +126,9 @@ dependencies {
 
     // Timber
     implementation(libs.timber)
+
+    // Material Components (provides Theme.Material3.DayNight.NoActionBar for XML)
+    implementation(libs.material)
 
     // Accompanist Permissions
     implementation(libs.accompanist.permissions)

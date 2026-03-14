@@ -322,6 +322,16 @@ DebtorsViewModel
 
 > **Примітка:** Починаючи з Android 10+, для відтворення аудіо під час дзвінка може знадобитися
 > `AudioManager.setMode(MODE_IN_CALL)` і `AudioManager.setSpeakerphoneOn(true)`.
+>
+> ⚠️ **ВИМОГИ (не видаляти!):**
+> 1. **Затримка перед аудіо** — зберігається в `AppPreferences.audioDelaySeconds` (за замовч. 15 с).
+>    Налаштовується на екрані Settings. Читається в `AutoDialerService` перед запуском MediaPlayer.
+>    `AppPreferences.kt` обов'язковий; без нього сервіс не компілюється.
+> 2. **TX-маршрутизація аудіо** — щоб абонент чув mp3 під час дзвінка:
+>    - При `CALL_STATE_OFFHOOK`: `audioManager.mode = AudioManager.MODE_IN_CALL`
+>    - `MediaPlayer` з `AudioAttributes.USAGE_VOICE_COMMUNICATION` + `CONTENT_TYPE_SPEECH`
+>    - При `CALL_STATE_IDLE` та `onDestroy`: `audioManager.mode = AudioManager.MODE_NORMAL`
+>    - Дозвіл `MODIFY_AUDIO_SETTINGS` у AndroidManifest.xml — вже є.
 
 ---
 
@@ -580,8 +590,10 @@ if (!permissionsState.allPermissionsGranted) {
 - Вбудований `ConnectionService` дає більше контролю (SAFE_CALL режим).
 
 ### Відтворення аудіо під час дзвінка
-- Необхідно переключити `AudioManager` в режим `MODE_IN_CALL`.
+- ⚠️ Обов'язково переключити `AudioManager` в режим `MODE_IN_CALL` при OFFHOOK.
+- MediaPlayer: `AudioAttributes(USAGE_VOICE_COMMUNICATION, CONTENT_TYPE_SPEECH)` — маршрутизує звук у TX-канал дзвінка (абонент чує).
 - `AudioFocusRequest` для коректного повернення звуку після дзвінка.
+- Скидати режим у `MODE_NORMAL` при IDLE та `onDestroy`.
 - На деяких виробниках (Xiaomi, Samsung) потрібна перевірка MIUI/One UI специфіки.
 
 ### Черга дзвінків

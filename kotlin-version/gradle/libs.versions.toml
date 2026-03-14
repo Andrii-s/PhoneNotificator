@@ -13,6 +13,7 @@ lifecycle               = "2.8.5"
 activityCompose         = "1.9.2"
 timber                  = "5.0.1"
 accompanist             = "0.34.0"
+material                = "1.12.0"
 coreKtx                 = "1.13.1"
 junit                   = "4.13.2"
 mockito-kotlin          = "5.2.1"
@@ -69,6 +70,9 @@ timber                                  = { group = "com.jakewharton.timber",   
 
 # Accompanist
 accompanist-permissions                 = { group = "com.google.accompanist",    name = "accompanist-permissions",           version.ref = "accompanist" }
+
+# Material Components (for XML themes: Theme.Material3.*)
+material                                = { group = "com.google.android.material",  name = "material",                          version.ref = "material" }
 
 # Testing
 junit                                   = { group = "junit",                      name = "junit",                             version.ref = "junit" }

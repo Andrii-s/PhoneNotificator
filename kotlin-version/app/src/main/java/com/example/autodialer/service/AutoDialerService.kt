@@ -8,6 +8,7 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
 import android.media.AudioAttributes
+import android.media.AudioManager
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Build
@@ -25,6 +26,7 @@ import com.example.autodialer.domain.model.CallLog
 import com.example.autodialer.domain.model.CallReport
 import com.example.autodialer.domain.model.CallStatus
 import com.example.autodialer.domain.repository.CallRepository
+import com.example.autodialer.data.local.AppPreferences
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -94,6 +96,9 @@ class AutoDialerService : Service() {
     @Inject
     lateinit var callRepository: CallRepository
 
+    @Inject
+    lateinit var appPreferences: AppPreferences
+
     // -------------------------------------------------------------------------
     // Internal state
     // -------------------------------------------------------------------------
@@ -102,6 +107,7 @@ class AutoDialerService : Service() {
     private var selectedAudioFilePath: String = ""
 
     private var telephonyManager: TelephonyManager? = null
+    private var audioManager: AudioManager? = null
     private var mediaPlayer: MediaPlayer? = null
     private val mainHandler = Handler(Looper.getMainLooper())
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
@@ -150,6 +156,7 @@ class AutoDialerService : Service() {
         Timber.d("AutoDialerService created")
         createNotificationChannel()
         telephonyManager = getSystemService(TELEPHONY_SERVICE) as TelephonyManager
+        audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
         registerPhoneStateListener()
     }
 
@@ -167,6 +174,7 @@ class AutoDialerService : Service() {
         Timber.d("AutoDialerService destroyed")
         unregisterPhoneStateListener()
         releaseMediaPlayer()
+        audioManager?.mode = AudioManager.MODE_NORMAL
         serviceScope.cancel()
     }
 
@@ -250,8 +258,10 @@ class AutoDialerService : Service() {
                 if (isCallPlaced && !wasOffHook) {
                     wasOffHook = true
                     callStartTime = System.currentTimeMillis()
-                    Timber.d("OFFHOOK — scheduling audio playback in 1 s")
-                    mainHandler.postDelayed({ startAudioPlayback() }, 1_000L)
+                    audioManager?.mode = AudioManager.MODE_IN_CALL
+                    val delayMs = appPreferences.audioDelaySeconds * 1_000L
+                    Timber.d("OFFHOOK — scheduling audio in ${appPreferences.audioDelaySeconds} s (TX mode: IN_CALL)")
+                    mainHandler.postDelayed({ startAudioPlayback() }, delayMs)
                 }
             }
 
@@ -260,6 +270,7 @@ class AutoDialerService : Service() {
                     mainHandler.removeCallbacksAndMessages(null)
                     wasOffHook = false
                     isCallPlaced = false
+                    audioManager?.mode = AudioManager.MODE_NORMAL
                     val endTime = System.currentTimeMillis()
                     val durationSec = (endTime - callStartTime) / 1_000
                     Timber.d("IDLE after OFFHOOK — duration=${durationSec}s, audioStarted=$wasAudioStarted")

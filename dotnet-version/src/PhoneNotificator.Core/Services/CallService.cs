@@ -6,12 +6,15 @@ namespace PhoneNotificator.Core.Services;
 
 public sealed class CallService : ICallService
 {
+    private static readonly TimeSpan DefaultCallConnectionTimeout = TimeSpan.FromSeconds(30);
+
     private readonly IAudioPlayerService _audioPlayerService;
     private readonly IPhoneDialerService _phoneDialerService;
     private readonly ICallMonitor _callMonitor;
     private readonly IAudioInjectionService _audioInjectionService;
     private readonly ICallPermissionService _callPermissionService;
     private readonly IAppSession _appSession;
+    private readonly TimeSpan _callConnectionTimeout;
 
     public CallService(
         IAudioPlayerService audioPlayerService,
@@ -19,7 +22,8 @@ public sealed class CallService : ICallService
         ICallMonitor callMonitor,
         IAudioInjectionService audioInjectionService,
         ICallPermissionService callPermissionService,
-        IAppSession appSession)
+        IAppSession appSession,
+        TimeSpan? callConnectionTimeout = null)
     {
         _audioPlayerService = audioPlayerService;
         _phoneDialerService = phoneDialerService;
@@ -27,6 +31,7 @@ public sealed class CallService : ICallService
         _audioInjectionService = audioInjectionService;
         _callPermissionService = callPermissionService;
         _appSession = appSession;
+        _callConnectionTimeout = callConnectionTimeout ?? DefaultCallConnectionTimeout;
     }
 
     public async Task MakeCallAsync(
@@ -50,7 +55,14 @@ public sealed class CallService : ICallService
         var startTime = DateTime.UtcNow;
 
         await _phoneDialerService.DialAsync(phoneNumber, ct);
-        await _callMonitor.WaitForConnectedAsync(ct);
+        try
+        {
+            await _callMonitor.WaitForConnectedAsync(ct).WaitAsync(_callConnectionTimeout, ct);
+        }
+        catch (TimeoutException ex)
+        {
+            throw new TimeoutException("The call was not connected within the expected time.", ex);
+        }
 
         var callEndedTask = _callMonitor.WaitForEndedAsync(ct);
         await _audioInjectionService.PrepareForCallAudioAsync(ct);

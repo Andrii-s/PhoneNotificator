@@ -122,6 +122,32 @@ public sealed class CallServiceTests
     }
 
     [Fact]
+    public async Task MakeCallAsync_WhenCallDoesNotConnect_ThrowsTimeoutException()
+    {
+        var audioFilePath = Path.GetTempFileName();
+        await File.WriteAllBytesAsync(audioFilePath, [1, 2, 3]);
+        try
+        {
+            var service = new CallService(
+                Mock.Of<IAudioPlayerService>(),
+                new PhoneDialerSpy(),
+                new NeverConnectingCallMonitor(),
+                new NoOpAudioInjectionServiceStub(),
+                new FakeCallPermissionService(),
+                new AppSession { CallAudioDelaySeconds = 0 },
+                TimeSpan.FromMilliseconds(100));
+
+            var act = () => service.MakeCallAsync("+380001112233", audioFilePath, _ => Task.CompletedTask);
+
+            await act.Should().ThrowAsync<TimeoutException>();
+        }
+        finally
+        {
+            File.Delete(audioFilePath);
+        }
+    }
+
+    [Fact]
     public async Task MakeCallAsync_MissingAudioFile_ThrowsFileNotFoundException()
     {
         var service = new CallService(
@@ -142,5 +168,22 @@ public sealed class CallServiceTests
         public Task PrepareForCallAudioAsync(CancellationToken ct = default) => Task.CompletedTask;
 
         public Task RestoreAfterCallAsync(CancellationToken ct = default) => Task.CompletedTask;
+    }
+
+    private sealed class NeverConnectingCallMonitor : ICallMonitor
+    {
+        public void Reset()
+        {
+        }
+
+        public Task WaitForConnectedAsync(CancellationToken ct = default)
+        {
+            return Task.Delay(Timeout.InfiniteTimeSpan, ct);
+        }
+
+        public Task WaitForEndedAsync(CancellationToken ct = default)
+        {
+            return Task.Delay(Timeout.InfiniteTimeSpan, ct);
+        }
     }
 }

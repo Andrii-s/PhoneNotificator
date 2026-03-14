@@ -35,26 +35,30 @@ public static class MauiProgram
         builder.Services.AddSingleton<IAppFileSystem, MauiFileSystem>();
         builder.Services.AddSingleton<IPreferencesService, PreferencesService>();
         builder.Services.AddSingleton<IAudioFileService, AudioFileService>();
-        builder.Services.AddSingleton<IAudioPlayerService, AudioPlayerService>();
         builder.Services.AddSingleton<IFilePickerService, FilePickerService>();
         builder.Services.AddSingleton<INavigationService, ShellNavigationService>();
         builder.Services.AddSingleton<IToastService, ToastService>();
         builder.Services.AddSingleton<IConfirmationService, PopupConfirmationService>();
         builder.Services.AddSingleton<IAppCloser, AppCloser>();
-        builder.Services.AddSingleton<IPhoneDialerService, PhoneDialerService>();
 
 #if ANDROID
+        builder.Services.AddSingleton<IAudioPlayerService, AndroidAudioPlayerService>();
+        builder.Services.AddSingleton<IPhoneDialerService, AndroidPhoneDialerService>();
         builder.Services.AddSingleton<ICallMonitor, AndroidCallMonitor>();
         builder.Services.AddSingleton<IAudioInjectionService, AndroidAudioInjector>();
         builder.Services.AddSingleton<ICallPermissionService, AndroidCallPermissionService>();
         builder.Services.AddSingleton<ICallService, CallService>();
 #elif IOS
+        builder.Services.AddSingleton<IAudioPlayerService, AudioPlayerService>();
+        builder.Services.AddSingleton<IPhoneDialerService, PhoneDialerService>();
         builder.Services.AddSingleton<CallObserver>();
         builder.Services.AddSingleton<ICallMonitor, IosCallMonitor>();
         builder.Services.AddSingleton<IAudioInjectionService, IosAudioInjectionService>();
         builder.Services.AddSingleton<ICallPermissionService, IosCallPermissionService>();
         builder.Services.AddSingleton<ICallService, CallService>();
 #else
+        builder.Services.AddSingleton<IAudioPlayerService, AudioPlayerService>();
+        builder.Services.AddSingleton<IPhoneDialerService, PhoneDialerService>();
         builder.Services.AddSingleton<IAudioInjectionService, NoOpAudioInjectionService>();
         builder.Services.AddSingleton<ICallPermissionService, AlwaysGrantedCallPermissionService>();
         builder.Services.AddSingleton<ICallService, PreviewCallService>();

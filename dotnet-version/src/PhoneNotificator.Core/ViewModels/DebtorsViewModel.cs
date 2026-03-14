@@ -210,10 +210,10 @@ public partial class DebtorsViewModel : ObservableObject
                 selectedAudioFile.FilePath,
                 HandleCallCompletedAsync);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            ErrorMessage = "Не вдалося виконати дзвінки.";
-            CallLog.Add($"[{DateTime.Now:HH:mm}] Зупинка через помилку.");
+            ErrorMessage = BuildCallErrorMessage(ex);
+            CallLog.Add($"[{DateTime.Now:HH:mm}] Зупинка через помилку: {ErrorMessage}");
             await _toastService.ShowAsync(ErrorMessage);
         }
         finally
@@ -236,5 +236,16 @@ public partial class DebtorsViewModel : ObservableObject
         {
             CallLog.Add($"[{DateTime.Now:HH:mm}] Не вдалося відправити звіт для {report.PhoneNumber}.");
         }
+    }
+
+    private static string BuildCallErrorMessage(Exception exception)
+    {
+        return exception switch
+        {
+            InvalidOperationException => "Не вдалося виконати дзвінок: не надано потрібні дозволи.",
+            TimeoutException => "Не вдалося виконати дзвінок: виклик не перейшов у стан з'єднання.",
+            NotSupportedException => "Не вдалося виконати дзвінок: на пристрої немає доступного call handler.",
+            _ => "Не вдалося виконати дзвінки.",
+        };
     }
 }
